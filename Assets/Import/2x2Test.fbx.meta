@@ -1,11 +1,11 @@
 fileFormatVersion: 2
-guid: 6275d3ad26048784b9d116ef5ba75a7e
+guid: 2ca28c2f0e867244bb09e864c6ccf660
 ModelImporter:
   serializedVersion: 23
   fileIDToRecycleName:
     100000: //RootNode
     400000: //RootNode
-    2100000: lambert1
+    2100000: lambert2
     2300000: //RootNode
     3300000: //RootNode
     4300000: pCube1
