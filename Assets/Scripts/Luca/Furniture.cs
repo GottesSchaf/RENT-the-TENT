@@ -17,6 +17,7 @@ public class Furniture : MonoBehaviour
     Collider collider;
     NavMeshObstacle navCollider;
 
+    public event System.Action OnPlaced;
 
     public bool Moving
     {
@@ -89,15 +90,17 @@ public class Furniture : MonoBehaviour
         }
     }
 
-    public void StartMoving()
+    public void PickUp()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         var position = FurnitureMap.Instance.GetTilePositionFromRay(ray);
         Moving = true;
         FurnitureMap.Instance.RemoveFurniture(this, position.Value);
+
+        //create UI Element??
     }
 
-    public void StopMoving()
+    public void TryPlace()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         var position = FurnitureMap.Instance.GetTilePositionFromRay(ray);
@@ -108,6 +111,7 @@ public class Furniture : MonoBehaviour
             {
                 FurnitureMap.Instance.PlaceFurniture(this, position.Value);
                 Moving = false;
+                OnPlaced?.Invoke();
             }
         }
     }
@@ -142,12 +146,21 @@ public class Furniture : MonoBehaviour
                 if (FurnitureMap.Instance.CanPlaceFurniture(this, position.Value))
                 {
                     GetComponent<Renderer>().material.SetFloat("colRed", 0);
+
+
                 }
                 else
                 {
                     GetComponent<Renderer>().material.SetFloat("colRed", 1);
                 }
             }
+
+            //placing
+            if (Input.GetMouseButtonDown(0))
+            {
+                TryPlace();
+            }
+
         }
     }
 
