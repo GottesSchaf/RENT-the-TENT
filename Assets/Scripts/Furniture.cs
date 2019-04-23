@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class Furniture : MonoBehaviour
 {
@@ -13,6 +14,10 @@ public class Furniture : MonoBehaviour
 
     private Material[] normalMats;
 
+    Collider collider;
+    NavMeshObstacle navCollider;
+
+
     public bool Moving
     {
         get{ return moving; }
@@ -22,11 +27,11 @@ public class Furniture : MonoBehaviour
             {
                 if (value)
                 {
-                    Enable();
+                    EnableMoving();
                 }
                 else
                 {
-                    Disable();
+                    DisableMoving();
                 }
             }
 
@@ -35,9 +40,10 @@ public class Furniture : MonoBehaviour
     }
 
 
-    private void Enable()
+    private void EnableMoving()
     {
-        //disable collision, navmash blocking
+        collider.enabled = false;
+        navCollider.enabled = false;
 
         var renderer = GetComponent<Renderer>();
         normalMats = renderer.materials;
@@ -45,9 +51,10 @@ public class Furniture : MonoBehaviour
         renderer.material = movingMat;
     }
 
-    private void Disable()
+    private void DisableMoving()
     {
-        // enable collision, navmash blocking
+        collider.enabled = true;
+        navCollider.enabled = true;
 
         var renderer = GetComponent<Renderer>();
         renderer.materials = normalMats;
@@ -107,6 +114,8 @@ public class Furniture : MonoBehaviour
 
     private void Start()
     {
+        collider = GetComponent<Collider>();
+        navCollider = GetComponent<NavMeshObstacle>();
         Moving = true;
     }
 
