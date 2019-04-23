@@ -83,7 +83,7 @@ public class FurnitureMap : MonoBehaviour {
         return tilePos;
     }
 
-    public bool CanPlaceFurniture(Furniture f, Vector2Int displacement)
+    public bool CanPlaceFurniture(Furniture f, Vector2Int displacement) //Fix: for loop should start at -1 when size is relative negative, change everything
     {
         Vector2Int size = f.GetOrientedMapSize();
 
