@@ -3,12 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Furniture : MonoBehaviour {
-
-    [SerializeField] bool debug;
-    
+public class Furniture : MonoBehaviour
+{
     [SerializeField] Vector2Int size;
-    [SerializeField] Material movingMat;
+    [SerializeField] private Material movingMat;
 
     private bool moving;
     private Orientation orientation;
@@ -17,13 +15,10 @@ public class Furniture : MonoBehaviour {
 
     public bool Moving
     {
-        get
-        {
-            return moving;
-        }
+        get{ return moving; }
         set
         {
-            if(value != moving)
+            if (value != moving)
             {
                 if (value)
                 {
@@ -60,11 +55,7 @@ public class Furniture : MonoBehaviour {
 
     public Orientation Orient
     {
-        get
-        {
-            return orientation;
-        }
-
+        get{ return orientation; }
         set
         {
             orientation = value;
@@ -91,35 +82,43 @@ public class Furniture : MonoBehaviour {
         }
     }
 
-
-    void Update()
+    public void StartMoving()
     {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        var position = FurnitureMap.Instance.GetTilePositionFromRay(ray);
+        Moving = true;
+        FurnitureMap.Instance.RemoveFurniture(this, position.Value);
+    }
 
+    public void StopMoving()
+    {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         var position = FurnitureMap.Instance.GetTilePositionFromRay(ray);
 
-        //interaction
-        if (debug)
+        if (position.HasValue)
         {
-            if (Input.GetMouseButtonDown(0))
+            if (FurnitureMap.Instance.CanPlaceFurniture(this, position.Value))
             {
-                if (!Moving)
-                {
-                    Moving = true;
-                }
-                else
-                {
-                    if (position.HasValue)
-                    {
-                        if (FurnitureMap.Instance.CanPlaceFurniture(this, position.Value))
-                        {
-                            FurnitureMap.Instance.PlaceFurniture(this, position.Value);
-                            Moving = false;
-                        }
-                    }
-                }
+                FurnitureMap.Instance.PlaceFurniture(this, position.Value);
+                Moving = false;
             }
-            else if (Input.GetKeyDown(KeyCode.Q))
+        }
+    }
+
+    private void Start()
+    {
+        Moving = true;
+    }
+
+    void Update()
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        var position = FurnitureMap.Instance.GetTilePositionFromRay(ray);
+
+        //visuals
+        if (Moving)
+        {
+            if (Input.GetKeyDown(KeyCode.Q))
             {
                 RotateOrientation(false);
             }
@@ -127,11 +126,7 @@ public class Furniture : MonoBehaviour {
             {
                 RotateOrientation(true);
             }
-        }
 
-        //visuals
-        if (Moving)
-        {
             if (position.HasValue)
             {
                 transform.position = new Vector3(position.Value.x, 0, position.Value.y);
@@ -150,15 +145,15 @@ public class Furniture : MonoBehaviour {
 
     public Vector2Int GetOrientedMapSize()
     {
-        if(Orient == Orientation.Up)
+        if (Orient == Orientation.Up)
         {
             return size;
         }
-        else if( Orient == Orientation.Down)
+        else if (Orient == Orientation.Down)
         {
-            return new Vector2Int(-size.x , -size.y);
+            return new Vector2Int(-size.x, -size.y);
         }
-        else if(Orient == Orientation.Right)
+        else if (Orient == Orientation.Right)
         {
             return new Vector2Int(size.y, -size.x);
         }
@@ -171,7 +166,7 @@ public class Furniture : MonoBehaviour {
     private void RotateOrientation(bool right)
     {
         int addition = right ? 1 : -1;
-        int temp = (int) modulo((int)Orient + addition, 4);
+        int temp = (int)modulo((int)Orient + addition, 4);
 
         Orient = (Orientation)temp;
     }
@@ -183,16 +178,9 @@ public class Furniture : MonoBehaviour {
 
     private void OnDrawGizmos()
     {
-        if (!debug)
-        {
-            return;
-        }
-
-
-        Vector2Int pos = GetOrientedMapSize();
-
+        Vector2 pos = GetOrientedMapSize();
         Gizmos.color = Color.magenta;
-        Gizmos.DrawWireCube(transform.position + new Vector3(pos.x / 2, 0.5f, pos.y / 2) + GetOrientationVector(Orient)/2, new Vector3(pos.x, 1, pos.y));
+        Gizmos.DrawWireCube(transform.position + new Vector3(pos.x / 2, 0.5f, pos.y / 2) , new Vector3(pos.x, 1, pos.y));
     }
 
     public Vector3 GetOrientationVector(Orientation o)

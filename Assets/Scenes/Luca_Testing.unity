@@ -222,6 +222,14 @@ Prefab:
       propertyPath: m_LocalScale.x
       value: -2
       objectReference: {fileID: 0}
+    - target: {fileID: 100000, guid: 6275d3ad26048784b9d116ef5ba75a7e, type: 3}
+      propertyPath: m_Name
+      value: FurniturePrefab
+      objectReference: {fileID: 0}
+    - target: {fileID: 2300000, guid: 6275d3ad26048784b9d116ef5ba75a7e, type: 3}
+      propertyPath: m_DynamicOccludee
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6275d3ad26048784b9d116ef5ba75a7e, type: 3}
   m_IsPrefabAsset: 0
@@ -241,8 +249,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72a3365be8a26f44ebb76598d16af6f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  debug: 1
-  orientation: 0
   size: {x: 2, y: 3}
   movingMat: {fileID: 2100000, guid: 3a41c5375f5550744bb9a0aba019bf56, type: 2}
 --- !u!1 &534669902

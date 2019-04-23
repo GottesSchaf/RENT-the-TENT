@@ -69,43 +69,84 @@ public class FurnitureMap : MonoBehaviour {
     {
         //Debug.Log("Point: " + point);
 
-        Vector2Int? tilePos = null;
-
         Vector2Int temp = new Vector2Int(Mathf.FloorToInt(point.x), Mathf.FloorToInt(point.z));
 
         //Debug.Log("Rounded: " + temp);
 
-        if (temp.x >= 0 && temp.x < houseSize.x && temp.y >= 0 && temp.y < houseSize.y)
-        {
-            tilePos = temp;
-        }
+        //if (temp.x >= 0 && temp.x < houseSize.x && temp.y >= 0 && temp.y < houseSize.y)
+        //{
+        //    tilePos = temp;
+        //}
 
-        return tilePos;
+        return temp;
     }
 
     public bool CanPlaceFurniture(Furniture f, Vector2Int displacement) //Fix: for loop should start at -1 when size is relative negative, change everything
     {
         Vector2Int size = f.GetOrientedMapSize();
 
-        if(size.magnitude <= 1)
+        if (size.magnitude <= 1)
         {
             Debug.LogError("Furniture has incorrect size.");
             return false;
         }
 
-        int xAdd = (size.x > 0) ? 1 : -1;
-        int yAdd = (size.y > 0) ? 1 : -1;
+        #region checking if
 
-        for (int x = 0; (xAdd>0) ? x < size.x : x > size.x; x+= xAdd)  
+        if (size.x > 0)
         {
-            for (int y = 0; (yAdd>0) ?  y < size.y : y > size.y; y+= yAdd)
+            for (int x = 0; x < size.x; x++)
             {
-                if (CheckMap(displacement.x + x,displacement.y + y))
+                if (size.y > 0)
                 {
-                    return false;
-                } 
+                    for (int y = 0; y < size.y; y++)
+                    {
+                        if (CheckMap(displacement.x + x, displacement.y + y))
+                        {
+                            return false;
+                        }
+                    }
+                }
+                else
+                {
+                    for (int y = -1; y >= size.y; y--)
+                    {
+                        if (CheckMap(displacement.x + x, displacement.y + y))
+                        {
+                            return false;
+                        }
+                    }
+                }
             }
         }
+        else
+        {
+            for (int x = -1; x >= size.x; x--)
+            {
+                if (size.y > 0)
+                {
+                    for (int y = 0; y < size.y; y++)
+                    {
+                        if (CheckMap(displacement.x + x, displacement.y + y))
+                        {
+                            return false;
+                        }
+                    }
+                }
+                else
+                {
+                    for (int y = -1; y >= size.y; y--)
+                    {
+                        if (CheckMap(displacement.x + x, displacement.y + y))
+                        {
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+
+        #endregion
 
         return true;
      }
@@ -131,16 +172,62 @@ public class FurnitureMap : MonoBehaviour {
 
         Vector2Int size = f.GetOrientedMapSize();
 
-        int xAdd = (size.x > 0) ? 1 : -1;
-        int yAdd = (size.y > 0) ? 1 : -1;
+        SetTiles(size, displacement, true);
+    }
 
-        for (int x = 0; (xAdd > 0) ? x < size.x : x > size.x; x += xAdd)
+    public void RemoveFurniture(Furniture f, Vector2Int displacement)
+    {
+        Vector2Int size = f.GetOrientedMapSize();
+
+        SetTiles(size, displacement, false);
+    }
+
+    private void SetTiles(Vector2Int size, Vector2Int displacement, bool state)
+    {
+        #region set code
+
+        if (size.x > 0)
         {
-            for (int y = 0; (yAdd > 0) ? y < size.y : y > size.y; y += yAdd)
+            for (int x = 0; x < size.x; x++)
             {
-                occupationMap[displacement.x + x, displacement.y + y] = true;
+                if (size.y > 0)
+                {
+                    for (int y = 0; y < size.y; y++)
+                    {
+                        occupationMap[x + displacement.x, y + displacement.y] = state;
+                    }
+                }
+                else
+                {
+                    for (int y = -1; y >= size.y; y--)
+                    {
+                        occupationMap[x + displacement.x, y + displacement.y] = state;
+                    }
+                }
             }
         }
+        else
+        {
+            for (int x = -1; x >= size.x; x--)
+            {
+                if (size.y > 0)
+                {
+                    for (int y = 0; y < size.y; y++)
+                    {
+                        occupationMap[x + displacement.x, y + displacement.y] = state;
+                    }
+                }
+                else
+                {
+                    for (int y = -1; y >= size.y; y--)
+                    {
+                        occupationMap[x + displacement.x, y + displacement.y] = state;
+                    }
+                }
+            }
+        }
+
+        #endregion
     }
 
 
