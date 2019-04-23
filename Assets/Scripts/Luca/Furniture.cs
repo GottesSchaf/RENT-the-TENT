@@ -10,6 +10,7 @@ public class Furniture : MonoBehaviour
     [SerializeField] private Material movingMat;
 
     private bool moving;
+    private float pickUpTime = 0;
     private Orientation orientation;
 
     private Material[] normalMats;
@@ -92,10 +93,15 @@ public class Furniture : MonoBehaviour
 
     public void PickUp()
     {
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        var position = FurnitureMap.Instance.GetTilePositionFromRay(ray);
+        if (moving)
+        {
+            return;
+        }
+
+        var position = FurnitureMap.Instance.GetTilePositionFromPoint(transform.position);
         Moving = true;
         FurnitureMap.Instance.RemoveFurniture(this, position.Value);
+        pickUpTime = Time.timeSinceLevelLoad;
 
         //create UI Element??
     }
@@ -156,7 +162,7 @@ public class Furniture : MonoBehaviour
             }
 
             //placing
-            if (Input.GetMouseButtonDown(0))
+            if (Input.GetMouseButtonDown(0) && (Time.timeSinceLevelLoad-pickUpTime >0.2f))
             {
                 TryPlace();
             }

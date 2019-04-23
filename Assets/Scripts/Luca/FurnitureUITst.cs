@@ -44,8 +44,12 @@ public class FurnitureUITst : MonoBehaviour {
             else
             {
                 im.color = Color.white;
-                if(spawnedFurniture!=null)
-                Destroy(spawnedFurniture.gameObject);
+                if (spawnedFurniture != null)
+                {
+                    spawnedFurniture.OnPlaced -= OnFurniturePlaced;
+                    Destroy(spawnedFurniture.gameObject);
+                }
+
 
                 if (Input.GetMouseButtonDown(0))
                 {
@@ -66,9 +70,6 @@ public class FurnitureUITst : MonoBehaviour {
                 }
             }
         }
-
-        
-        
 
 	}
 

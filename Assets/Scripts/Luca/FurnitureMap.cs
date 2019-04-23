@@ -8,6 +8,7 @@ public class FurnitureMap : MonoBehaviour {
 
     [SerializeField] bool debug;
     [SerializeField] Vector2Int houseSize;
+    [SerializeField] bool inFurnitureEditMode;
 
     private Plane surfacePlane;
 
@@ -34,19 +35,20 @@ public class FurnitureMap : MonoBehaviour {
 
     private void Update()
     {
-        //if (debug)
-        //{
-        //    if (Input.GetMouseButtonDown(0))
-        //    {
-        //        Vector2Int? v2Null = GetTilePositionFromRay(Camera.main.ScreenPointToRay(Input.mousePosition));
-        //
-        //        if (v2Null.HasValue)
-        //        {
-        //            Vector2Int v2 = v2Null.Value;
-        //            occupationMap[v2.x, v2.y] = !occupationMap[v2.x, v2.y];
-        //        }
-        //    }
-        //}
+        if(inFurnitureEditMode && Input.GetMouseButtonDown(0))
+        {
+            Ray r = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+            var hits = Physics.RaycastAll(r);
+            foreach (var hit in hits)
+            {
+                if(hit.transform.tag == "Furniture")
+                {
+                    hit.transform.GetComponent<Furniture>().PickUp();
+                    break;
+                }
+            }
+        }
     }
 
     public Vector2Int? GetTilePositionFromRay(Ray ray)
@@ -65,19 +67,9 @@ public class FurnitureMap : MonoBehaviour {
         return tilePos;
     }
 
-    private Vector2Int? GetTilePositionFromPoint(Vector3 point)
+    public Vector2Int? GetTilePositionFromPoint(Vector3 point)
     {
-        //Debug.Log("Point: " + point);
-
         Vector2Int temp = new Vector2Int(Mathf.FloorToInt(point.x), Mathf.FloorToInt(point.z));
-
-        //Debug.Log("Rounded: " + temp);
-
-        //if (temp.x >= 0 && temp.x < houseSize.x && temp.y >= 0 && temp.y < houseSize.y)
-        //{
-        //    tilePos = temp;
-        //}
-
         return temp;
     }
 
