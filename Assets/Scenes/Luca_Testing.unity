@@ -586,7 +586,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   debug: 1
-  houseSize: {x: 8, y: 10}
+  mapStartingTexture: {fileID: 2800000, guid: ac15951cd62ee3c4caf0512109d8bc1f, type: 3}
+  houseSize: {x: 100, y: 10}
   inFurnitureEditMode: 1
 --- !u!1 &1544232765
 GameObject:

@@ -7,6 +7,9 @@ public class FurnitureMap : MonoBehaviour {
     public static FurnitureMap Instance;
 
     [SerializeField] bool debug;
+
+    [SerializeField] Texture2D mapStartingTexture;
+    [Header("Ignored if Texture is used")]
     [SerializeField] Vector2Int houseSize;
     [SerializeField] bool inFurnitureEditMode;
 
@@ -30,7 +33,24 @@ public class FurnitureMap : MonoBehaviour {
         surfacePlane = new Plane(Vector3.up, Vector3.zero);
         tileSize = 1;
 
-        occupationMap = new bool[houseSize.x, houseSize.y];
+        if(mapStartingTexture == null)
+        {
+            occupationMap = new bool[houseSize.x, houseSize.y];
+        }
+        else
+        {
+            occupationMap = new bool[mapStartingTexture.width, mapStartingTexture.height];
+
+            for (int x = 0; x < occupationMap.GetLength(0); x++)
+            {
+                for (int y = 0; y < occupationMap.GetLength(1); y++)
+                {
+                    occupationMap[x, y] = mapStartingTexture.GetPixel(x, y).r <= 0.5f;
+                }
+            }
+
+        }
+
 	}
 
     private void Update()
@@ -230,9 +250,9 @@ public class FurnitureMap : MonoBehaviour {
             return;
         }
 
-        for (int x = 0; x < houseSize.x; x++)
+        for (int x = 0; x < occupationMap.GetLength(0); x++)
         {
-            for (int y = 0; y < houseSize.y; y++)
+            for (int y = 0; y < occupationMap.GetLength(1); y++)
             {
                 Gizmos.color = occupationMap[x, y] ? new Color(0,0,0,0.3f) : new Color(1,1,1,0.3f);
                 Gizmos.DrawCube(new Vector3(x * tileSize + tileSize / 2, 0 , y * tileSize + tileSize / 2), new Vector3(tileSize,0, tileSize));
